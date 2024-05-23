@@ -1,13 +1,59 @@
 <div class="step-component-container">
   <h1>Step 1: Choose your Model and color</h1>
-  <form [formGroup]="carFormGroup">
+
+  <!--When selecting carmodel, we should get the colors by indexing the selected model in the model signal
+  , this should store in the cardcolor signal. When selecting color we should call the get images endpoint to get the picture, store the value in a signal and display it
+  -->
+
+  <form [formGroup]="carFormGroup" (ngSubmit)="saveCarData()">
     <div class="form-input">
       <label for="model">Model</label>
-      <select id="modelSelect"></select>
+      <select
+        name="modelSelect"
+        id="modelSelect"
+        [formControl]="carFormGroup.controls.model"
+        #myTemplateVar
+        formControlName="model"
+        (focus)="getCars()"
+      >
+        <ng-container *ngFor="let item of carModels()">
+          <option [value]="item.code" selected>
+            Model {{ item.description }}
+          </option>
+        </ng-container>
+      </select>
+      <p><strong>Selected Index {{ myTemplateVar.selectedIndex}}</strong></p>
     </div>
-    <div class="form-input">
-      <label for="color">color</label>
-      <select id="colorSelect"></select>
+    <div *ngIf="myTemplateVar.selectedIndex !== -1" class="form-input">
+      <label for="color">Color</label>
+      <select
+        name="colorSelect"
+        id="colorSelect"
+        [formControl]="carFormGroup.controls.color"
+        formControlName="color"
+      >
+        <ng-container
+          *ngFor="let item of carModels()[myTemplateVar.selectedIndex].colors"
+        >
+          <option [value]="item.code" selected>{{ item.description }}</option>
+        </ng-container>
+      </select>
+      <p>Selected color {{ carFormGroup.controls.color.value }}</p>
     </div>
+    <button type="submit">Svae</button>
   </form>
+  <button (click)="getCars()">get cras</button>
+  <!--MOVE THIS TO ITS OWN COMPONENT-->
+  <div class="car">
+    <div
+      *ngIf="carFormGroup.controls.model.value  && carFormGroup.controls.color.value"
+    >
+      <img
+        [src]="getCarImgPath(carFormGroup.controls.model.value, carFormGroup.controls.color.value )"
+        alt="a picture of a car"
+        height="400"
+        width="800"
+      />
+    </div>
+  </div>
 </div>

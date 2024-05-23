@@ -15,11 +15,15 @@ export const routes: Routes = [
   {
     path: 'step/2',
     loadComponent: () =>
-      import('./features/step2/step2.component').then((c) => c.Step2Component),
+      import('./features/steps/step2/step2.component').then(
+        (c) => c.Step2Component
+      ),
   },
   {
     path: 'step/3',
     loadComponent: () =>
-      import('./features/step3/step3.component').then((c) => c.Step3Component),
+      import('./features/steps/step3/step3.component').then(
+        (c) => c.Step3Component
+      ),
   },
 ];
