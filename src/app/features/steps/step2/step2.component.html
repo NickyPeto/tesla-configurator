@@ -1,3 +1,19 @@
-<p>step2 works!</p>
-<p>{{ selectedCar().model }}</p>
-<p>{{ selectedCar().color }}</p>
+<ng-container *ngIf="carConfig$ | async as carConfig">
+  <div *ngFor="let keyValuePair of carConfig | keyvalue">
+    <!-- <ng-container *ngFor="let item of keyValuePair.value.configs">
+      <p>Description {{ item.description }}</p>
+      <p>Price {{ item.price | currency : "USD" }}</p>
+      <p>Speed {{ item.speed }}</p>
+    </ng-container> -->
+
+    <p>{{ keyValuePair.key }}{{ keyValuePair.value }}</p>
+  </div>
+</ng-container>
+
+<!-- <ng-container *ngFor="let item of config[selectedCar().model].configs">
+    <p>Description {{ item.description }}</p>
+    <p>Price {{ item.price | currency : "USD" }}</p>
+    <p>Speed {{ item.speed }}</p>
+  </ng-container>
+  <p>Tow Hitch{{ item.towHitch }}</p>
+  <p>Yoke{{ item.yoke }}</p> -->

@@ -1,6 +1,7 @@
 import {
   ChangeDetectorRef,
   Component,
+  inject,
   OnDestroy,
   OnInit,
   Signal,
@@ -14,9 +15,14 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { CarConfigService } from '../../../core/car-config.service';
-import { CarModel, CarsModel, SelectedCar } from '../../../models/cars.model';
+import {
+  CarColors,
+  CarModel,
+  CarsModel,
+  SelectedCar,
+} from '../../../models/cars.model';
 import { CommonModule } from '@angular/common';
-import { filter, Observable, Subject, takeUntil } from 'rxjs';
+import { filter, map, Observable, of, Subject, takeUntil } from 'rxjs';
 import { NavigationEnd, Router } from '@angular/router';
 
 @Component({
@@ -26,19 +32,24 @@ import { NavigationEnd, Router } from '@angular/router';
   templateUrl: './step1.component..html',
   styleUrl: './step1.component.scss',
 })
-export class Step1Component implements OnDestroy {
+export class Step1Component implements OnInit, OnDestroy {
   cancellation = new Subject<void>();
-  carModels: Signal<CarModel[]> = signal([]);
-  selectedCar: WritableSignal<SelectedCar>;
+  carModels$: Observable<CarModel[]> | undefined;
+  selectedCar: WritableSignal<SelectedCar> = this.carsService.selectedCar;
+
+  selectedModelColors: CarColors[] = [];
 
   carFormGroup = new FormGroup({
-    model: new FormControl<CarsModel>('S'),
-    color: new FormControl<string>(''),
+    model: new FormControl<CarsModel | string>('choose'),
+    color: new FormControl<string>('white'),
   });
 
   constructor(private carsService: CarConfigService, private router: Router) {
-    this.carModels = this.carsService.compSignal();
-    this.selectedCar = this.carsService.selectedCar;
+    this.carModels$ = this.carsService.carModels$;
+  }
+
+  ngOnInit(): void {
+    this.getSelectedCarColors();
   }
 
   ngOnDestroy(): void {
@@ -46,21 +57,39 @@ export class Step1Component implements OnDestroy {
     this.cancellation.complete();
   }
 
-  getCars() {
-    this.carsService.getCarsModel();
-    //   .pipe(takeUntil(this.cancellation))
-    //   .subscribe((v) => this.carModels.set(v));
-  }
-
-  getCarImgPath(model: string, color: string) {
-    console.log(model, color, `../../../../assets/${model}/${color}.jpg`);
-    return `../../../../assets/${model}/${color}.jpg`;
+  getSelectedCarColors() {
+    this.carFormGroup.controls.model.valueChanges
+      .pipe(
+        takeUntil(this.cancellation),
+        filter((modelCode) => !!modelCode),
+        map((modelCode) => {
+          if (this.carModels$) {
+            return this.carModels$.pipe(
+              map((models) => models.find((model) => model.code === modelCode))
+            );
+          } else return of();
+        })
+      )
+      .subscribe((model$) => {
+        model$.pipe(takeUntil(this.cancellation)).subscribe((model) => {
+          if (model) {
+            this.selectedModelColors = model.colors;
+            console.log(this.carFormGroup.controls.color.value);
+            this.carsService.selectedCarColor.set(
+              this.carFormGroup.controls.color.value
+            );
+          } else {
+            this.selectedModelColors = [];
+          }
+        });
+      });
   }
 
   saveCarData() {
     this.carsService.selectedCar.update((value) => {
       const updatedValue: SelectedCar = {
-        model: this.carFormGroup.controls.model.value ?? value.model,
+        model: (this.carFormGroup.controls.model.value ??
+          value.model) as CarsModel,
         color: this.carFormGroup.controls.color.value ?? value.color,
         config: value.config,
         price: value.price,

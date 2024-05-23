@@ -5,16 +5,32 @@ import {
   WritableSignal,
   computed,
   effect,
+  inject,
   signal,
 } from '@angular/core';
-import { CarColors, CarModel, SelectedCar } from '../models/cars.model';
+import {
+  CarColors,
+  CarConfig,
+  CarModel,
+  SelectedCar,
+} from '../models/cars.model';
+import { catchError, Observable, of, throwError } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CarConfigService implements OnInit {
-  carModels: WritableSignal<CarModel[]> = signal([]);
-  compSignal = computed(() => this.carModels);
+  http = inject(HttpClient);
+
+  carModels$: Observable<CarModel[]> = this.http.get<CarModel[]>('/models');
+
+  //We save this value in a signal so that we can easily update its value and use it without the need for an observable
+  selectedCarColor = signal<string | null>('');
+
+  //We create a signal to set the value and a readonly signal to read it from our step2 component
+  carConfig: WritableSignal<CarConfig> = signal({});
+  // computedCarConfig = computed(() => this.carModels);
+
   selectedCar: WritableSignal<SelectedCar> = signal({
     model: 'X',
     color: '',
@@ -22,21 +38,11 @@ export class CarConfigService implements OnInit {
     config: '',
   });
 
-  constructor(private http: HttpClient) {
-    effect(() => {
-      console.log('com signal triggered', this.compSignal, this.carModels());
-    });
-  }
-
   ngOnInit(): void {
     console.log(this.selectedCar(), 'in service');
   }
 
-  getCarsModel() {
-    this.http.get<CarModel[]>('/models').subscribe((v: CarModel[]) => {
-      this.carModels.set(v);
-      console.log(v);
-      return this.compSignal;
-    });
+  getCarConfig(code: string): Observable<CarConfig> {
+    return this.http.get<CarConfig>(`/options/${code}`);
   }
 }

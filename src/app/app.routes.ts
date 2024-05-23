@@ -1,9 +1,10 @@
 import { Routes } from '@angular/router';
-import { Step1Component } from './features/steps/step1/step1.component';
+
 export const routes: Routes = [
   {
     path: '',
-    component: Step1Component,
+    redirectTo: 'step/1',
+    pathMatch: 'full',
   },
   {
     path: 'step/1',

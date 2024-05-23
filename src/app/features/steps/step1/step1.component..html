@@ -4,8 +4,12 @@
   <!--When selecting carmodel, we should get the colors by indexing the selected model in the model signal
   , this should store in the cardcolor signal. When selecting color we should call the get images endpoint to get the picture, store the value in a signal and display it
   -->
-
-  <form [formGroup]="carFormGroup" (ngSubmit)="saveCarData()">
+  <form
+    class="form"
+    [formGroup]="carFormGroup"
+    (ngSubmit)="saveCarData()"
+    *ngIf="carModels$ | async"
+  >
     <div class="form-input">
       <label for="model">Model</label>
       <select
@@ -14,46 +18,30 @@
         [formControl]="carFormGroup.controls.model"
         #myTemplateVar
         formControlName="model"
-        (focus)="getCars()"
+        (change)="saveCarData()"
       >
-        <ng-container *ngFor="let item of carModels()">
-          <option [value]="item.code" selected>
-            Model {{ item.description }}
-          </option>
+        <option disabled [value]="'choose'">Choose</option>
+        <ng-container *ngFor="let item of carModels$ | async; index as i">
+          <option [value]="item.code" selected>{{ item.description }}</option>
         </ng-container>
       </select>
-      <p><strong>Selected Index {{ myTemplateVar.selectedIndex}}</strong></p>
     </div>
-    <div *ngIf="myTemplateVar.selectedIndex !== -1" class="form-input">
+    <div
+      *ngIf="carFormGroup.controls.model.value !== 'choose'"
+      class="form-input"
+    >
       <label for="color">Color</label>
       <select
         name="colorSelect"
         id="colorSelect"
         [formControl]="carFormGroup.controls.color"
         formControlName="color"
+        (change)="saveCarData()"
       >
-        <ng-container
-          *ngFor="let item of carModels()[myTemplateVar.selectedIndex].colors"
-        >
+        <ng-container *ngFor="let item of selectedModelColors">
           <option [value]="item.code" selected>{{ item.description }}</option>
         </ng-container>
       </select>
-      <p>Selected color {{ carFormGroup.controls.color.value }}</p>
     </div>
-    <button type="submit">Svae</button>
   </form>
-  <button (click)="getCars()">get cras</button>
-  <!--MOVE THIS TO ITS OWN COMPONENT-->
-  <div class="car">
-    <div
-      *ngIf="carFormGroup.controls.model.value  && carFormGroup.controls.color.value"
-    >
-      <img
-        [src]="getCarImgPath(carFormGroup.controls.model.value, carFormGroup.controls.color.value )"
-        alt="a picture of a car"
-        height="400"
-        width="800"
-      />
-    </div>
-  </div>
 </div>

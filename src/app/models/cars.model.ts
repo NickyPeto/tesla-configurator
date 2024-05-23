@@ -1,3 +1,4 @@
+//TODO: SPLIT THIS INTO DIFFERENT FILES
 export interface CarModel {
   code: CarsModel;
   description: string;
@@ -19,4 +20,20 @@ export interface SelectedCar {
   price: number;
   yoke?: string;
   towHitch?: string;
+}
+
+export interface Configs {
+  id: number;
+  description: string;
+  range: number;
+  speed: number;
+  price: number;
+}
+
+export interface CarConfig {
+  [key: string]: {
+    configs: Configs[];
+    towHitch: boolean;
+    yoke: boolean;
+  };
 }
