@@ -11,6 +11,7 @@ import {
 import {
   CarColors,
   CarConfig,
+  CarConfigDetails,
   CarModel,
   SelectedCar,
 } from '../models/cars.model';
@@ -32,7 +33,7 @@ export class CarConfigService implements OnInit {
   // computedCarConfig = computed(() => this.carModels);
 
   selectedCar: WritableSignal<SelectedCar> = signal({
-    model: 'X',
+    model: '',
     color: '',
     price: 0,
     config: '',
@@ -42,7 +43,7 @@ export class CarConfigService implements OnInit {
     console.log(this.selectedCar(), 'in service');
   }
 
-  getCarConfig(code: string): Observable<CarConfig> {
-    return this.http.get<CarConfig>(`/options/${code}`);
+  getCarConfig(code: string): Observable<CarConfigDetails> {
+    return this.http.get<CarConfigDetails>(`/options/${code}`);
   }
 }

@@ -1,19 +1,41 @@
 <ng-container *ngIf="carConfig$ | async as carConfig">
-  <div *ngFor="let keyValuePair of carConfig | keyvalue">
-    <!-- <ng-container *ngFor="let item of keyValuePair.value.configs">
-      <p>Description {{ item.description }}</p>
-      <p>Price {{ item.price | currency : "USD" }}</p>
-      <p>Speed {{ item.speed }}</p>
-    </ng-container> -->
+  <ng-container *ngFor="let keyValuePair of carConfig | keyvalue">
+    <ng-container *ngIf="isBoolean(keyValuePair.value)">
+      <label [for]="keyValuePair.key">{{ keyValuePair.key }} </label>
+      <input
+        type="checkbox"
+        [name]="keyValuePair.key"
+        [value]="keyValuePair.value"
+      />
+    </ng-container>
 
-    <p>{{ keyValuePair.key }}{{ keyValuePair.value }}</p>
-  </div>
-</ng-container>
+    <ng-container *ngIf="isArray(keyValuePair.value)">
+      Config:
+      <select #selectedVal id="configSelect">
+        <ng-container *ngFor="let conf of keyValuePair.value">
+          <option [value]="conf.description">{{ conf.description }}</option>
+        </ng-container>
+      </select>
+      <ng-container *ngIf="selectedVal.selectedIndex > -1">
+        <ng-container>
+          <p>{{ selectedVal.selectedIndex }}</p>
+          <p>
+            Range: {{ keyValuePair.value[selectedVal.selectedIndex].range }}
+          </p>
+          <p>
+            Max speed: {{ keyValuePair.value[selectedVal.selectedIndex].speed }}
+          </p>
+          <p>
+            Cost :
+            {{
+              keyValuePair.value[selectedVal.selectedIndex].price
+                | currency : "USD"
+            }}
+          </p>
+        </ng-container>
 
-<!-- <ng-container *ngFor="let item of config[selectedCar().model].configs">
-    <p>Description {{ item.description }}</p>
-    <p>Price {{ item.price | currency : "USD" }}</p>
-    <p>Speed {{ item.speed }}</p>
+        <div></div>
+      </ng-container>
+    </ng-container>
   </ng-container>
-  <p>Tow Hitch{{ item.towHitch }}</p>
-  <p>Yoke{{ item.yoke }}</p> -->
+</ng-container>

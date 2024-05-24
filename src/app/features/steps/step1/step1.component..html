@@ -1,9 +1,5 @@
 <div class="step-component-container">
   <h1>Step 1: Choose your Model and color</h1>
-
-  <!--When selecting carmodel, we should get the colors by indexing the selected model in the model signal
-  , this should store in the cardcolor signal. When selecting color we should call the get images endpoint to get the picture, store the value in a signal and display it
-  -->
   <form
     class="form"
     [formGroup]="carFormGroup"
@@ -27,7 +23,7 @@
       </select>
     </div>
     <div
-      *ngIf="carFormGroup.controls.model.value !== 'choose'"
+      *ngIf="carFormGroup.controls.model.value !== 'choose' || selectedCar().color !== ''"
       class="form-input"
     >
       <label for="color">Color</label>

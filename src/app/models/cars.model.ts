@@ -5,7 +5,7 @@ export interface CarModel {
   colors: CarColors[];
 }
 
-export type CarsModel = 'X' | 'S' | 'C' | '3' | 'Y';
+export type CarsModel = 'X' | 'S' | 'C' | '3' | 'Y' | '';
 
 export type CarColors = {
   code: string;
@@ -31,9 +31,11 @@ export interface Configs {
 }
 
 export interface CarConfig {
-  [key: string]: {
-    configs: Configs[];
-    towHitch: boolean;
-    yoke: boolean;
-  };
+  [key: string]: CarConfigDetails;
+}
+
+export interface CarConfigDetails {
+  configs: Configs[];
+  towHitch: boolean;
+  yoke: boolean;
 }

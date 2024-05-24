@@ -6,7 +6,12 @@ import {
   WritableSignal,
 } from '@angular/core';
 import { CarConfigService } from '../../../core/car-config.service';
-import { CarConfig, SelectedCar } from '../../../models/cars.model';
+import {
+  CarConfig,
+  CarConfigDetails,
+  Configs,
+  SelectedCar,
+} from '../../../models/cars.model';
 import { CommonModule } from '@angular/common';
 import { Observable, Subject, takeUntil } from 'rxjs';
 
@@ -20,7 +25,7 @@ import { Observable, Subject, takeUntil } from 'rxjs';
 export class Step2Component implements OnInit {
   cancellation = new Subject<void>();
   selectedCar: WritableSignal<SelectedCar>;
-  carConfig$: Observable<CarConfig>;
+  carConfig$: Observable<CarConfigDetails>;
   constructor(private carService: CarConfigService) {
     this.selectedCar = this.carService.selectedCar;
     // this.carConfig = this.carService.computedCarConfig()
@@ -30,7 +35,7 @@ export class Step2Component implements OnInit {
   ngOnInit(): void {
     this.carConfig$
       .pipe(takeUntil(this.cancellation))
-      .subscribe((v) => console.log(v));
+      .subscribe((v) => console.log('subscription result', v));
   }
 
   ngOnDestroy(): void {
@@ -38,5 +43,13 @@ export class Step2Component implements OnInit {
     this.cancellation.complete();
     //Called once, before the instance is destroyed.
     //Add 'implements OnDestroy' to the class.
+  }
+
+  isBoolean(value: boolean | Configs[]): boolean {
+    return typeof value === 'boolean';
+  }
+
+  isArray(value: Configs[] | boolean): value is Configs[] {
+    return Array.isArray(value);
   }
 }

@@ -46,6 +46,7 @@ export class Step1Component implements OnInit, OnDestroy {
 
   constructor(private carsService: CarConfigService, private router: Router) {
     this.carModels$ = this.carsService.carModels$;
+    this.selectedCar = this.carsService.selectedCar;
   }
 
   ngOnInit(): void {
