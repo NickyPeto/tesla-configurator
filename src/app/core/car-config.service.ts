@@ -36,7 +36,7 @@ export class CarConfigService implements OnInit {
     model: '',
     color: '',
     price: 0,
-    config: '',
+    config: undefined,
   });
 
   ngOnInit(): void {
@@ -46,4 +46,6 @@ export class CarConfigService implements OnInit {
   getCarConfig(code: string): Observable<CarConfigDetails> {
     return this.http.get<CarConfigDetails>(`/options/${code}`);
   }
+
+  getSelectedCarColors() {}
 }

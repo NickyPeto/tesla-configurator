@@ -51,6 +51,7 @@ export class Step1Component implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getSelectedCarColors();
+    console.log(this.selectedCar(), 'In step 1');
   }
 
   ngOnDestroy(): void {
@@ -92,17 +93,11 @@ export class Step1Component implements OnInit, OnDestroy {
         model: (this.carFormGroup.controls.model.value ??
           value.model) as CarsModel,
         color: this.carFormGroup.controls.color.value ?? value.color,
-        config: value.config,
-        price: value.price,
       };
-      console.log(
-        {
-          ...value,
-          ...updatedValue,
-        },
-        'in updated signal'
-      );
-      return updatedValue;
+      return {
+        ...value,
+        ...updatedValue,
+      };
     });
   }
 }

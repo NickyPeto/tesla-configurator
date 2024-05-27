@@ -14,11 +14,6 @@ export class CarPictureComponent {
   constructor(private carService: CarConfigService) {}
 
   getCarImgPath() {
-    console.log(
-      `../../../../assets/${this.selectedCar().model}/${
-        this.selectedCar().color
-      }.jpg`
-    );
     return `../../../../assets/${this.selectedCar().model}/${
       this.selectedCar().color
     }.jpg`;

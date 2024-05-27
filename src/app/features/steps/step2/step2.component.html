@@ -1,41 +1,54 @@
-<ng-container *ngIf="carConfig$ | async as carConfig">
-  <ng-container *ngFor="let keyValuePair of carConfig | keyvalue">
-    <ng-container *ngIf="isBoolean(keyValuePair.value)">
-      <label [for]="keyValuePair.key">{{ keyValuePair.key }} </label>
-      <input
-        type="checkbox"
-        [name]="keyValuePair.key"
-        [value]="keyValuePair.value"
-      />
+<ng-container
+  *ngIf="carConfig$ | async as carConfig"
+  [formGroup]="carConfigFormGroup"
+>
+  Config:
+  <select
+    #selectedVal
+    id="configSelect"
+    [formControl]="carConfigFormGroup.controls.config"
+    (change)="saveCarData()"
+  >
+    <ng-container *ngFor="let config of carConfig.configs">
+      <option [ngValue]="config" selected>
+        {{ config.description }}
+      </option>
     </ng-container>
-
-    <ng-container *ngIf="isArray(keyValuePair.value)">
-      Config:
-      <select #selectedVal id="configSelect">
-        <ng-container *ngFor="let conf of keyValuePair.value">
-          <option [value]="conf.description">{{ conf.description }}</option>
-        </ng-container>
-      </select>
-      <ng-container *ngIf="selectedVal.selectedIndex > -1">
-        <ng-container>
-          <p>{{ selectedVal.selectedIndex }}</p>
-          <p>
-            Range: {{ keyValuePair.value[selectedVal.selectedIndex].range }}
-          </p>
-          <p>
-            Max speed: {{ keyValuePair.value[selectedVal.selectedIndex].speed }}
-          </p>
-          <p>
-            Cost :
-            {{
-              keyValuePair.value[selectedVal.selectedIndex].price
-                | currency : "USD"
-            }}
-          </p>
-        </ng-container>
-
-        <div></div>
-      </ng-container>
-    </ng-container>
+  </select>
+  <ng-container
+    *ngIf="
+      selectedVal.selectedIndex > -1 &&
+      carConfig.configs[selectedVal.selectedIndex]
+    "
+  >
+    <div class="config-wrapper">
+      <p>Range: {{ carConfig.configs[selectedVal.selectedIndex].range }}</p>
+      <p>Speed: {{ carConfig.configs[selectedVal.selectedIndex].speed }}</p>
+      <p>
+        Price:
+        {{
+          carConfig.configs[selectedVal.selectedIndex].price | currency : "USD"
+        }}
+      </p>
+    </div>
   </ng-container>
+
+  <div *ngIf="carConfig.towHitch">
+    <label for="includeTow">Include Tow</label>
+    <input
+      [formControl]="carConfigFormGroup.controls.towHitch"
+      id="includeTow"
+      type="checkbox"
+      [value]="carConfig.towHitch"
+    />
+  </div>
+  <div *ngIf="carConfig.yoke">
+    <label for="includeYoke">Include Yoke</label>
+    <input
+      [formControl]="carConfigFormGroup.controls.yoke"
+      id="includeYoke"
+      type="checkbox"
+      [value]="carConfig.yoke"
+    />
+  </div>
 </ng-container>

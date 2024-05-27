@@ -16,18 +16,17 @@ export type CarColors = {
 export interface SelectedCar {
   model: CarsModel;
   color: string;
-  config: string;
-  price: number;
-  yoke?: string;
-  towHitch?: string;
+  config?: Configs;
+  yoke?: boolean;
+  towHitch?: boolean;
 }
 
 export interface Configs {
-  id: number;
-  description: string;
-  range: number;
-  speed: number;
-  price: number;
+  id: number | undefined;
+  description: string | undefined;
+  range: number | undefined;
+  speed: number | undefined;
+  price: number | undefined;
 }
 
 export interface CarConfig {

@@ -1,1 +1,30 @@
-<p>step3 works!</p>
+<h1>Step 3: Summary</h1>
+
+<h3>Your tesla {{ selectedCar().model }}</h3>
+
+<p>
+  <strong>{{ selectedCar().config?.description }}</strong>
+</p>
+<div>
+  <div>
+    <p>{{ selectedCar().config?.range }}</p>
+    <p>{{ selectedCar().config?.speed }}</p>
+  </div>
+  <div>
+    <p>{{ selectedCar().config?.price | currency : "USD" }}</p>
+  </div>
+  <div *ngIf="selectedCar().towHitch">
+    <p>Tow Hitch</p>
+    <p>{{ 1000 | currency : "USD" }}</p>
+  </div>
+  <div *ngIf="selectedCar().yoke">
+    <p>Yoke</p>
+    <p>{{ 1000 | currency : "USD" }}</p>
+  </div>
+  <div>
+    <p>
+      <strong>Total cost:</strong>
+    </p>
+    <p>{{ totalCost() | currency : "USD" }}</p>
+  </div>
+</div>
