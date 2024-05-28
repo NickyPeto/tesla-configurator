@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
-import { activateWhenCompletedGuard } from './core/guards/activate-when-completed.guard';
+import { guardStep1 } from './core/guards/guard-step1/guard-step1.guard';
+import { guardStep2Guard } from './core/guards/guard-step2/guard-step2.guard';
 
 export const routes: Routes = [
   {
@@ -21,7 +22,7 @@ export const routes: Routes = [
       import('./features/steps/step2/step2.component').then(
         (c) => c.Step2Component
       ),
-    canActivate: [activateWhenCompletedGuard],
+    canActivate: [guardStep1],
   },
   {
     path: 'step/3',
@@ -29,10 +30,11 @@ export const routes: Routes = [
       import('./features/steps/step3/step3.component').then(
         (c) => c.Step3Component
       ),
-    canActivate: [activateWhenCompletedGuard],
+    canActivate: [guardStep2Guard],
   },
   {
     path: '**',
     redirectTo: 'step/1',
+    pathMatch: 'full',
   },
 ];

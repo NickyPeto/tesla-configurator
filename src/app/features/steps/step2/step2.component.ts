@@ -2,7 +2,6 @@ import {
   ChangeDetectorRef,
   Component,
   inject,
-  signal,
   WritableSignal,
 } from '@angular/core';
 import { CarConfigService } from '../../../core/car-config.service';
@@ -68,7 +67,6 @@ export class Step2Component {
         yoke: yokeSelected! ?? false,
         towHitch: towHitch! ?? false,
       };
-      console.log(updatedObject, 'updated object');
       return updatedObject;
     });
   }
