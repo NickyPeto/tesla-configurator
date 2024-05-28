@@ -17,7 +17,7 @@
     <ng-container *ngIf="selectedCar()">
       <div class="config-wrapper">
         <p *ngIf="selectedCar().config.range > 0">
-          Range: {{ selectedCar().config.range }}
+          Range: {{ selectedCar().config.range }} miles
         </p>
         <p *ngIf="selectedCar().config.speed > 0">
           Speed: {{ selectedCar().config.speed }}

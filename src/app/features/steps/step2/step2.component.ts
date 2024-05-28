@@ -61,7 +61,6 @@ export class Step2Component {
         yoke: yokeSelected!,
         towHitch: towHitch!,
       };
-
       return updatedObject;
     });
   }

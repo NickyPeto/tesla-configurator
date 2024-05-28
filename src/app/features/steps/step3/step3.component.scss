@@ -1,0 +1,15 @@
+.row {
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+
+  &.totalcost {
+    border: 1px solid #909090;
+  }
+}
+
+.undertext {
+  display: flex;
+  justify-content: flex-start;
+  opacity: 0.8;
+}

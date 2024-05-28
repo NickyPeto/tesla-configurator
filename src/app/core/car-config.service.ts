@@ -1,26 +1,17 @@
 import { HttpClient } from '@angular/common/http';
+import { Injectable, WritableSignal, inject, signal } from '@angular/core';
 import {
-  Injectable,
-  OnInit,
-  WritableSignal,
-  computed,
-  effect,
-  inject,
-  signal,
-} from '@angular/core';
-import {
-  CarColors,
   CarConfig,
   CarConfigDetails,
   CarModel,
   SelectedCar,
 } from '../models/cars.model';
-import { catchError, Observable, of, throwError } from 'rxjs';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
-export class CarConfigService implements OnInit {
+export class CarConfigService {
   http = inject(HttpClient);
 
   carModels$: Observable<CarModel[]> = this.http.get<CarModel[]>('/models');
@@ -44,10 +35,6 @@ export class CarConfigService implements OnInit {
       speed: 0,
     },
   });
-
-  ngOnInit(): void {
-    console.log(this.selectedCar(), 'in service');
-  }
 
   getCarConfig(code: string): Observable<CarConfigDetails> {
     return this.http.get<CarConfigDetails>(`/options/${code}`);

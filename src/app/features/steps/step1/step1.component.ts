@@ -33,7 +33,7 @@ import { Router } from '@angular/router';
   templateUrl: './step1.component..html',
   styleUrl: './step1.component.scss',
 })
-export class Step1Component implements OnDestroy {
+export class Step1Component implements OnInit, OnDestroy {
   cancellation = new Subject<void>();
   carModels$: Observable<CarModel[]> | undefined;
   selectedCar: WritableSignal<SelectedCar> = this.carsService.selectedCar;
@@ -95,20 +95,12 @@ export class Step1Component implements OnDestroy {
           const currentIndex = model.colors.findIndex(
             (color) => color.code === this.selectedCar().color.code
           );
-          console.log(
-            this.selectedCar().color,
-            model.colors[findI],
-            this.carFormGroup.controls.color.pristine,
-            'in console log subscribe'
-          );
           if (
             this.carFormGroup.controls.color.pristine ||
             !model.colors[currentIndex]
           ) {
-            console.log('if', this.carFormGroup.controls.color.pristine);
             this.carFormGroup.controls.color.patchValue(model.colors[findI]);
           } else {
-            console.log('else');
             this.carFormGroup.controls.color.patchValue(
               model.colors[currentIndex]
             );
@@ -123,8 +115,6 @@ export class Step1Component implements OnDestroy {
             };
             return updatedVal;
           });
-
-          console.log(this.selectedCar().color, 'in selected car');
         }
       });
   }

@@ -1,34 +1,41 @@
 <h1>Step 3: Summary</h1>
-
-<h3>Your tesla {{ selectedCar().model }}</h3>
-
-<p>
-  <strong>{{ selectedCar().config.description }}</strong>
-</p>
-<div>
+<section>
+  <h3>
+    Your tesla {{ selectedCar().model }}
+    <strong>{{ selectedCar().config.description }}</strong>
+  </h3>
   <div>
-    <p>{{ selectedCar().config.range }}</p>
-    <p>{{ selectedCar().config.speed }}</p>
+    <div class="undertext">
+      <div class="row">
+        <p>Range:</p>
+        <p>{{ selectedCar().config.range }}</p>
+      </div>
+      <div class="row">
+        <p>Max Speed:</p>
+        <p>{{ selectedCar().config.speed }}</p>
+      </div>
+    </div>
+    <div class="row">
+      <p>Price:</p>
+      <p>{{ selectedCar().config.price | currency : "USD" }}</p>
+    </div>
+    <div class="row" *ngIf="selectedCar().towHitch">
+      <p>Tow Hitch</p>
+      <p>{{ 1000 | currency : "USD" }}</p>
+    </div>
+    <div class="row" *ngIf="selectedCar().yoke">
+      <p>Yoke</p>
+      <p>{{ 1000 | currency : "USD" }}</p>
+    </div>
+    <div class="row" *ngIf="selectedCar().color.price > 0">
+      <p>Color: {{ selectedCar().color.description }}</p>
+      <p>{{ selectedCar().color.price | currency : "USD" }}</p>
+    </div>
+    <div class="row totalcost">
+      <p>
+        <strong>Total cost:</strong>
+      </p>
+      <p>{{ totalCost() | currency : "USD" }}</p>
+    </div>
   </div>
-  <div>
-    <p>{{ selectedCar().config.price | currency : "USD" }}</p>
-  </div>
-  <div *ngIf="selectedCar().towHitch">
-    <p>Tow Hitch</p>
-    <p>{{ 1000 | currency : "USD" }}</p>
-  </div>
-  <div *ngIf="selectedCar().yoke">
-    <p>Yoke</p>
-    <p>{{ 1000 | currency : "USD" }}</p>
-  </div>
-  <div *ngIf="selectedCar().color.price > 0">
-    <p>Color: {{ selectedCar().color.description }}</p>
-    <p>{{ selectedCar().color.price | currency : "USD" }}</p>
-  </div>
-  <div>
-    <p>
-      <strong>Total cost:</strong>
-    </p>
-    <p>{{ totalCost() | currency : "USD" }}</p>
-  </div>
-</div>
+</section>
