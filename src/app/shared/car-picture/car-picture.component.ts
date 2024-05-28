@@ -13,11 +13,19 @@ export class CarPictureComponent {
 
   constructor(private carService: CarConfigService) {}
 
+  ngOnInit(): void {
+    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
+    //Add 'implements OnInit' to the class.
+
+    this.getCarImgPath();
+  }
+
   getCarImgPath() {
-    if (this.selectedCar().color.code)
+    if (this.selectedCar().color.code !== '') {
       return `../../../../assets/${this.selectedCar().model}/${
         this.selectedCar().color.code
       }.jpg`;
+    }
     return;
   }
 }

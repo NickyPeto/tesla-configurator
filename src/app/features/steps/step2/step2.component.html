@@ -9,8 +9,8 @@
     [formControl]="carConfigFormGroup.controls.config"
     (change)="saveCarData()"
     [compareWith]="compareFn"
-    required
   >
+    <option value="" disabled>Choose..</option>
     <ng-container *ngFor="let config of carConfig.configs">
       <option [ngValue]="config" selected>
         {{ config.description }}

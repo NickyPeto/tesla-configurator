@@ -1,0 +1,12 @@
+.stepper-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .step {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    border: 1px solid #a9a7a7b5;
+  }
+}

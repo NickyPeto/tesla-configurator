@@ -26,7 +26,7 @@ export class Step2Component {
   );
 
   carConfigFormGroup = new FormGroup({
-    config: new FormControl<Configs>(this.selectedCar().config),
+    config: new FormControl<Configs | null>(this.selectedCar().config),
     towHitch: new FormControl<boolean>(this.selectedCar().towHitch ?? false),
     yoke: new FormControl<boolean>(this.selectedCar().yoke ?? false),
   });

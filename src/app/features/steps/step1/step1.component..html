@@ -8,15 +8,20 @@
         id="modelSelect"
         [formControl]="carFormGroup.controls.model"
         (change)="saveCarData()"
+        #selectedItem
       >
-        <option disabled [value]="'choose'" selected>Choose</option>
+        <option [ngValue]="null" [disabled]="true" [selected]="true">
+          Choose..
+        </option>
         <ng-container *ngFor="let item of carModels$ | async; index as i">
-          <option [value]="item.code" selected>{{ item.description }}</option>
+          <option *ngIf="item.code.length > 0" [value]="item.code">
+            {{ item.description }}
+          </option>
         </ng-container>
       </select>
     </div>
     <div
-      *ngIf="carFormGroup.controls.model.value !== '' || !selectedCar().color"
+      *ngIf="carFormGroup.controls.model.value || !selectedCar().color || selectedModelColors"
       class="form-input"
     >
       <label for="color">Color</label>
@@ -26,10 +31,10 @@
         [formControl]="carFormGroup.controls.color"
         (change)="saveCarData()"
         [compareWith]="compareFn"
+        #selected
       >
-        <option value="'choose'" selected disabled>Choose..</option>
-        <ng-container *ngFor="let color of selectedModelColors">
-          <option [ngValue]="color" selected>{{color.description}}</option>
+        <ng-container *ngFor="let color of selectedModelColors; index as i">
+          <option [ngValue]="color">{{color.description}}</option>
         </ng-container>
       </select>
     </div>

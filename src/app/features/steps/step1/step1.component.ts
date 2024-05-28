@@ -41,7 +41,7 @@ export class Step1Component implements OnDestroy {
   selectedModelColors!: CarColors[];
 
   carFormGroup = new FormGroup({
-    model: new FormControl<CarsModel>('' || this.selectedCar().model),
+    model: new FormControl<CarsModel | null>(null),
     color: new FormControl<CarColors>(this.selectedCar().color),
   });
 
@@ -51,16 +51,21 @@ export class Step1Component implements OnDestroy {
   }
 
   ngOnInit(): void {
+    //Here we will get the right array of colors programmatically
     this.getSelectedCarColors();
-    this.carModels$
-      ?.pipe(
-        map((v) =>
-          v.filter((car) => car.code === this.carFormGroup.controls.model.value)
-        )
-      )
-      .subscribe((v) => {
-        this.selectedModelColors = v[0].colors;
-      });
+    this.selectedCar().model !== ''
+      ? this.carFormGroup.controls.model.patchValue(this.selectedCar().model)
+      : null;
+    if (this.selectedCar().color.code === '') {
+      this.carFormGroup.controls.color.markAsPristine();
+    } else {
+      this.carFormGroup.controls.color.markAsDirty();
+    }
+    console.log(
+      this.carFormGroup.controls.color.pristine,
+      this.selectedCar().color.code,
+      'on init'
+    );
   }
 
   ngOnDestroy(): void {
@@ -84,19 +89,48 @@ export class Step1Component implements OnDestroy {
         })
       )
       .subscribe((model) => {
-        if (model) this.selectedModelColors = model?.colors;
-        console.log(this.selectedModelColors, 'on select car colors');
+        console.log(model?.colors);
+        if (model) {
+          this.selectedModelColors = model?.colors;
+
+          const findI = model.colors.findIndex(
+            (color) => color.code === 'white'
+          );
+          if (this.carFormGroup.controls.color.pristine) {
+            this.carFormGroup.controls.color.patchValue(model.colors[findI]);
+          } else {
+            this.carFormGroup.controls.color.patchValue(
+              this.selectedCar().color
+            );
+          }
+          console.log('patched input', this.carFormGroup.controls.color.value);
+
+          this.selectedCar.update((prev) => {
+            const updatedVal: SelectedCar = {
+              ...prev,
+              color: prev.color.code === '' ? model.colors[findI] : prev.color,
+            };
+            console.log(updatedVal);
+            return updatedVal;
+          });
+
+          console.log(this.selectedCar().color, 'in selected car');
+        }
       });
   }
 
   saveCarData() {
+    this.carFormGroup.controls.model.valueChanges.subscribe((v) =>
+      this.carFormGroup.controls.color.markAsPristine()
+    );
+
     const carModel = this.carFormGroup.controls.model.value;
     const carColorCode = this.carFormGroup.controls.color.value?.code;
     const carColorPrice = this.carFormGroup.controls.color.value?.price;
     const carColorDescription =
       this.carFormGroup.controls.color.value?.description;
 
-    this.carsService.selectedCar.update((prev) => {
+    this.selectedCar.update((prev) => {
       const updatedValue: SelectedCar = {
         ...prev,
         model: carModel ?? prev.model,
@@ -112,7 +146,6 @@ export class Step1Component implements OnDestroy {
   }
 
   compareFn(obj1: CarColors, obj2: CarColors) {
-    console.log(obj1, obj2, 'in compare function');
     return obj1.description === obj2.description;
   }
 }
