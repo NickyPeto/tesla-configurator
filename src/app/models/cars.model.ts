@@ -16,7 +16,7 @@ export type CarColors = {
 export interface SelectedCar {
   model: CarsModel;
   color: CarColors;
-  config?: Configs;
+  config: Configs;
   yoke?: boolean;
   towHitch?: boolean;
 }

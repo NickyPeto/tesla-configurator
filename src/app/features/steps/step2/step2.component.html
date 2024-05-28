@@ -8,6 +8,8 @@
     id="configSelect"
     [formControl]="carConfigFormGroup.controls.config"
     (change)="saveCarData()"
+    [compareWith]="compareFn"
+    required
   >
     <ng-container *ngFor="let config of carConfig.configs">
       <option [ngValue]="config" selected>
@@ -22,8 +24,12 @@
     "
   >
     <div class="config-wrapper">
-      <p>Range: {{ carConfig.configs[selectedVal.selectedIndex].range }}</p>
-      <p>Speed: {{ carConfig.configs[selectedVal.selectedIndex].speed }}</p>
+      <p *ngIf="carConfig.configs[selectedVal.selectedIndex].range">
+        Range: {{ carConfig.configs[selectedVal.selectedIndex].range }}
+      </p>
+      <p *ngIf="carConfig.configs[selectedVal.selectedIndex].speed">
+        Speed: {{ carConfig.configs[selectedVal.selectedIndex].speed }}
+      </p>
       <p>
         Price:
         {{
@@ -38,17 +44,23 @@
     <input
       [formControl]="carConfigFormGroup.controls.towHitch"
       id="includeTow"
+      name="yoke"
       type="checkbox"
-      [value]="carConfig.towHitch"
+      (change)="saveCarData()"
+      [checked]="carConfigFormGroup.controls.towHitch.value"
     />
+    <p>is checked {{ carConfigFormGroup.controls.towHitch.value }}</p>
   </div>
   <div *ngIf="carConfig.yoke">
     <label for="includeYoke">Include Yoke</label>
     <input
       [formControl]="carConfigFormGroup.controls.yoke"
       id="includeYoke"
+      name="yoke"
       type="checkbox"
-      [value]="carConfig.yoke"
+      (change)="saveCarData()"
+      [checked]="carConfigFormGroup.controls.yoke.value"
     />
+    <p>is checked {{ carConfigFormGroup.controls.yoke.value }}</p>
   </div>
 </ng-container>

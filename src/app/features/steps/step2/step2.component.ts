@@ -1,6 +1,7 @@
-import { Component, OnInit, WritableSignal } from '@angular/core';
+import { Component, inject, WritableSignal } from '@angular/core';
 import { CarConfigService } from '../../../core/car-config.service';
 import {
+  CarConfig,
   CarConfigDetails,
   Configs,
   SelectedCar,
@@ -16,40 +17,19 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
   templateUrl: './step2.component.html',
   styleUrl: './step2.component.scss',
 })
-export class Step2Component implements OnInit {
-  carConfigFormGroup = new FormGroup({
-    config: new FormControl<Configs>({
-      id: -1,
-      description: '',
-      range: -1,
-      speed: -1,
-      price: -1,
-    }),
-    towHitch: new FormControl<boolean>(false),
-    yoke: new FormControl<boolean>(false),
-  });
-
+export class Step2Component {
+  carService = inject(CarConfigService);
   cancellation = new Subject<void>();
-  selectedCar: WritableSignal<SelectedCar>;
-  carConfig$: Observable<CarConfigDetails>;
+  selectedCar: WritableSignal<SelectedCar> = this.carService.selectedCar;
+  carConfig$: Observable<CarConfigDetails> = this.carService.getCarConfig(
+    this.selectedCar().model
+  );
 
-  constructor(private carService: CarConfigService) {
-    this.selectedCar = this.carService.selectedCar;
-    this.carConfig$ = this.carService.getCarConfig(this.selectedCar().model);
-  }
-
-  ngOnInit(): void {
-    this.carConfig$.subscribe((config) => {
-      // Initialize form with the first config
-      if (config.configs.length > 0) {
-        this.carConfigFormGroup.patchValue({
-          config: config.configs[0],
-          towHitch: config.towHitch,
-          yoke: config.yoke,
-        });
-      }
-    });
-  }
+  carConfigFormGroup = new FormGroup({
+    config: new FormControl<Configs>(this.selectedCar().config),
+    towHitch: new FormControl<boolean>(this.selectedCar().towHitch ?? false),
+    yoke: new FormControl<boolean>(this.selectedCar().yoke ?? false),
+  });
 
   ngOnDestroy(): void {
     this.cancellation.next();
@@ -64,13 +44,18 @@ export class Step2Component implements OnInit {
       const updatedObject: SelectedCar = {
         ...value,
         config: selectedConfig ?? value.config,
-        yoke: yokeSelected ?? value.yoke,
-        towHitch: towHitch ?? value.towHitch,
+        yoke: yokeSelected!,
+        towHitch: towHitch!,
       };
 
       return updatedObject;
     });
 
-    console.log('Selected Config:', selectedConfig);
+    console.log('Selected Config:', this.selectedCar());
+  }
+
+  compareFn(obj1: Configs, obj2: Configs) {
+    console.log(obj1, obj2, 'in compare function');
+    return obj1.description === obj2.description;
   }
 }

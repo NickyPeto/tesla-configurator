@@ -1,16 +1,15 @@
 <div class="step-component-container">
   <h1>Step 1: Choose your Model and color</h1>
-  <div class="form" [formGroup]="carFormGroup" *ngIf="carModels$ | async">
+  <div class="form" [formGroup]="carFormGroup" *ngIf="carModels$">
     <div class="form-input">
       <label for="model">Model</label>
       <select
         name="modelSelect"
         id="modelSelect"
         [formControl]="carFormGroup.controls.model"
-        #myTemplateVar
         (change)="saveCarData()"
       >
-        <option disabled [value]="'choose'">Choose</option>
+        <option disabled [value]="'choose'" selected>Choose</option>
         <ng-container *ngFor="let item of carModels$ | async; index as i">
           <option [value]="item.code" selected>{{ item.description }}</option>
         </ng-container>
@@ -26,9 +25,11 @@
         id="colorSelect"
         [formControl]="carFormGroup.controls.color"
         (change)="saveCarData()"
+        [compareWith]="compareFn"
       >
-        <ng-container *ngFor="let item of selectedModelColors">
-          <option [ngValue]="item" selected>{{ item.description }}</option>
+        <option value="'choose'" selected disabled>Choose..</option>
+        <ng-container *ngFor="let color of selectedModelColors">
+          <option [ngValue]="color" selected>{{color.description}}</option>
         </ng-container>
       </select>
     </div>

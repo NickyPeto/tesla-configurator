@@ -25,9 +25,6 @@ export class CarConfigService implements OnInit {
 
   carModels$: Observable<CarModel[]> = this.http.get<CarModel[]>('/models');
 
-  //We save this value in a signal so that we can easily update its value and use it without the need for an observable
-  selectedCarColor = signal<string | null>('');
-
   //We create a signal to set the value and a readonly signal to read it from our step2 component
   carConfig: WritableSignal<CarConfig> = signal({});
   // computedCarConfig = computed(() => this.carModels);
@@ -39,7 +36,13 @@ export class CarConfigService implements OnInit {
       description: '',
       price: 0,
     },
-    config: undefined,
+    config: {
+      id: 0,
+      description: '',
+      price: 0,
+      range: 0,
+      speed: 0,
+    },
   });
 
   ngOnInit(): void {
@@ -49,6 +52,4 @@ export class CarConfigService implements OnInit {
   getCarConfig(code: string): Observable<CarConfigDetails> {
     return this.http.get<CarConfigDetails>(`/options/${code}`);
   }
-
-  getSelectedCarColors() {}
 }

@@ -23,7 +23,8 @@ export const activateWhenCompletedGuard: CanActivateFn = (
     },
     {
       route: '/step/3',
-      canActivateRouteConfig: !carService.selectedCar().config,
+      canActivateRouteConfig:
+        carService.selectedCar().config.description === '',
     },
   ];
 
@@ -41,7 +42,7 @@ export const activateWhenCompletedGuard: CanActivateFn = (
         protectedRoute.route === '/step/3' &&
         protectedRoute.canActivateRouteConfig
       ) {
-        router.navigate(['/step/2']);
+        router.navigate(['/']);
         return false;
       }
     }

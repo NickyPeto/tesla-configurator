@@ -1,4 +1,10 @@
-import { Component, OnDestroy, OnInit, WritableSignal } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  signal,
+  WritableSignal,
+} from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CarConfigService } from '../../../core/car-config.service';
 import {
@@ -8,7 +14,16 @@ import {
   SelectedCar,
 } from '../../../models/cars.model';
 import { CommonModule } from '@angular/common';
-import { filter, map, Observable, of, Subject, takeUntil } from 'rxjs';
+import {
+  filter,
+  map,
+  Observable,
+  of,
+  startWith,
+  Subject,
+  switchMap,
+  takeUntil,
+} from 'rxjs';
 import { Router } from '@angular/router';
 
 @Component({
@@ -18,20 +33,16 @@ import { Router } from '@angular/router';
   templateUrl: './step1.component..html',
   styleUrl: './step1.component.scss',
 })
-export class Step1Component implements OnInit, OnDestroy {
+export class Step1Component implements OnDestroy {
   cancellation = new Subject<void>();
   carModels$: Observable<CarModel[]> | undefined;
   selectedCar: WritableSignal<SelectedCar> = this.carsService.selectedCar;
 
-  selectedModelColors: CarColors[] = [];
+  selectedModelColors!: CarColors[];
 
   carFormGroup = new FormGroup({
-    model: new FormControl<CarsModel>(''),
-    color: new FormControl<CarColors>({
-      code: '',
-      price: 0,
-      description: '',
-    }),
+    model: new FormControl<CarsModel>('' || this.selectedCar().model),
+    color: new FormControl<CarColors>(this.selectedCar().color),
   });
 
   constructor(private carsService: CarConfigService, private router: Router) {
@@ -41,6 +52,15 @@ export class Step1Component implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getSelectedCarColors();
+    this.carModels$
+      ?.pipe(
+        map((v) =>
+          v.filter((car) => car.code === this.carFormGroup.controls.model.value)
+        )
+      )
+      .subscribe((v) => {
+        this.selectedModelColors = v[0].colors;
+      });
   }
 
   ngOnDestroy(): void {
@@ -53,27 +73,19 @@ export class Step1Component implements OnInit, OnDestroy {
       .pipe(
         takeUntil(this.cancellation),
         filter((modelCode) => !!modelCode),
-        map((modelCode) => {
+        switchMap((modelCode) => {
           if (this.carModels$) {
             return this.carModels$.pipe(
               map((models) => models.find((model) => model.code === modelCode))
             );
-          } else return of();
+          } else {
+            return of();
+          }
         })
       )
-      .subscribe((model$) => {
-        model$.pipe(takeUntil(this.cancellation)).subscribe((model) => {
-          if (model) {
-            this.selectedModelColors = model.colors;
-            if (this.carFormGroup.controls.color.value?.code) {
-              this.carsService.selectedCarColor.set(
-                this.carFormGroup.controls.color.value?.code
-              );
-            }
-          } else {
-            this.selectedModelColors = [];
-          }
-        });
+      .subscribe((model) => {
+        if (model) this.selectedModelColors = model?.colors;
+        console.log(this.selectedModelColors, 'on select car colors');
       });
   }
 
@@ -97,5 +109,10 @@ export class Step1Component implements OnInit, OnDestroy {
 
       return updatedValue;
     });
+  }
+
+  compareFn(obj1: CarColors, obj2: CarColors) {
+    console.log(obj1, obj2, 'in compare function');
+    return obj1.description === obj2.description;
   }
 }
