@@ -1,4 +1,9 @@
-import { Component, inject, WritableSignal } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  inject,
+  WritableSignal,
+} from '@angular/core';
 import { CarConfigService } from '../../../core/car-config.service';
 import {
   CarConfig,
@@ -19,17 +24,26 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 })
 export class Step2Component {
   carService = inject(CarConfigService);
+  changeDet = inject(ChangeDetectorRef);
   cancellation = new Subject<void>();
   selectedCar: WritableSignal<SelectedCar> = this.carService.selectedCar;
-  carConfig$: Observable<CarConfigDetails> = this.carService.getCarConfig(
-    this.selectedCar().model
-  );
+  carConfig$!: Observable<CarConfigDetails>;
 
   carConfigFormGroup = new FormGroup({
-    config: new FormControl<Configs | null>(this.selectedCar().config),
+    config: new FormControl<Configs | null>(null),
     towHitch: new FormControl<boolean>(this.selectedCar().towHitch ?? false),
     yoke: new FormControl<boolean>(this.selectedCar().yoke ?? false),
   });
+
+  ngOnInit(): void {
+    this.selectedCar().config.description !== ''
+      ? this.carConfigFormGroup.controls.config.patchValue(
+          this.selectedCar().config
+        )
+      : null;
+    this.carConfig$ = this.carService.getCarConfig(this.selectedCar().model);
+    this.changeDet.detectChanges();
+  }
 
   ngOnDestroy(): void {
     this.cancellation.next();
@@ -51,8 +65,10 @@ export class Step2Component {
       return updatedObject;
     });
   }
-
-  compareFn(obj1: Configs, obj2: Configs) {
-    return obj1.description === obj2.description;
+  compareFn(obj1: Configs, obj2: Configs): boolean {
+    if (obj1 == null || obj2 == null) {
+      return obj1 === obj2;
+    }
+    return obj1.id === obj2.id;
   }
 }

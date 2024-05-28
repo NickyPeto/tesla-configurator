@@ -8,7 +8,6 @@
         id="modelSelect"
         [formControl]="carFormGroup.controls.model"
         (change)="saveCarData()"
-        #selectedItem
       >
         <option [ngValue]="null" [disabled]="true" [selected]="true">
           Choose..
