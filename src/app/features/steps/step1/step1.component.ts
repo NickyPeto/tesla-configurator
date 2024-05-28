@@ -121,7 +121,6 @@ export class Step1Component implements OnInit, OnDestroy {
       this.carFormGroup.controls.color.value?.description;
 
     this.selectedCar.update((prev) => {
-      console.log(carModel);
       const updatedValue: SelectedCar = {
         ...prev,
         model: {
