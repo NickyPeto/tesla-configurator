@@ -6,7 +6,6 @@ import {
 } from '@angular/core';
 import { CarConfigService } from '../../../core/car-config.service';
 import {
-  CarConfig,
   CarConfigDetails,
   Configs,
   SelectedCar,

@@ -45,17 +45,10 @@ export class Step1Component implements OnInit, OnDestroy {
     //Here we will get the right array of colors programmatically
     this.getSelectedCarColors();
 
-    console.log(!this.selectedCar(), 'oninit');
-
+    //We initialize the model formcontrol
     this.selectedCar().model.code !== ''
       ? this.carFormGroup.controls.model.patchValue(this.selectedCar().model)
       : null;
-
-    console.log(
-      this.selectedCar().model,
-      this.carFormGroup.controls.model.value,
-      'oninit'
-    );
 
     if (this.selectedCar().color.code === '') {
       this.carFormGroup.controls.color.markAsPristine();

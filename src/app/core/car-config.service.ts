@@ -18,7 +18,6 @@ export class CarConfigService {
 
   //We create a signal to set the value and a readonly signal to read it from our step2 component
   carConfig: WritableSignal<CarConfig> = signal({});
-  // computedCarConfig = computed(() => this.carModels);
 
   selectedCar: WritableSignal<SelectedCar> = signal({
     model: {
