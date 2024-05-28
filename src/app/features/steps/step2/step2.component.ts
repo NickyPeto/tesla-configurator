@@ -11,7 +11,7 @@ import {
   SelectedCar,
 } from '../../../models/cars.model';
 import { CommonModule } from '@angular/common';
-import { map, Observable, Subject } from 'rxjs';
+import { map, Observable, Subject, takeUntil } from 'rxjs';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
@@ -26,7 +26,9 @@ export class Step2Component {
   changeDet = inject(ChangeDetectorRef);
   cancellation = new Subject<void>();
   selectedCar: WritableSignal<SelectedCar> = this.carService.selectedCar;
-  carConfig$!: Observable<CarConfigDetails>;
+  carConfig$: Observable<CarConfigDetails> = this.carService.getCarConfig(
+    this.selectedCar().model.code
+  );
 
   carConfigFormGroup = new FormGroup({
     config: new FormControl<Configs | null>(null),
@@ -35,19 +37,16 @@ export class Step2Component {
   });
 
   ngOnInit(): void {
-    this.selectedCar().config.description !== ''
-      ? this.carConfigFormGroup.controls.config.patchValue(
-          this.selectedCar().config
-        )
-      : null;
-
-    if (this.selectedCar().model.code) {
-      this.carConfig$ = this.carService.getCarConfig(
-        this.selectedCar().model.code
-      );
-    }
-
-    this.changeDet.detectChanges();
+    this.carConfig$
+      .pipe(
+        takeUntil(this.cancellation),
+        map((value) => {
+          this.carConfigFormGroup.controls.config.patchValue(value.configs[0]);
+          this.carConfigFormGroup.controls.towHitch.patchValue(false);
+          this.carConfigFormGroup.controls.yoke.patchValue(false);
+        })
+      )
+      .subscribe((val) => console.log(val));
   }
 
   ngOnDestroy(): void {

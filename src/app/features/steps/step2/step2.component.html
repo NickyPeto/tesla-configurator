@@ -14,7 +14,9 @@
         </option>
       </ng-container>
     </select>
-    <ng-container *ngIf="selectedCar()">
+    <ng-container
+      *ngIf="selectedCar().config === carConfigFormGroup.controls.config.value"
+    >
       <div class="config-wrapper">
         <p *ngIf="selectedCar().config.range > 0">
           Range: {{ selectedCar().config.range }} miles
@@ -37,6 +39,7 @@
         name="yoke"
         type="checkbox"
         (change)="saveCarData()"
+        [checked]="false"
       />
     </div>
     <div *ngIf="carConfig.yoke">
@@ -47,6 +50,7 @@
         name="yoke"
         type="checkbox"
         (change)="saveCarData()"
+        [checked]="false"
       />
     </div>
   </div>
