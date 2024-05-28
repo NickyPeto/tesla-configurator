@@ -56,16 +56,12 @@ export class Step1Component implements OnDestroy {
     this.selectedCar().model !== ''
       ? this.carFormGroup.controls.model.patchValue(this.selectedCar().model)
       : null;
+
     if (this.selectedCar().color.code === '') {
       this.carFormGroup.controls.color.markAsPristine();
     } else {
       this.carFormGroup.controls.color.markAsDirty();
     }
-    console.log(
-      this.carFormGroup.controls.color.pristine,
-      this.selectedCar().color.code,
-      'on init'
-    );
   }
 
   ngOnDestroy(): void {
@@ -96,21 +92,35 @@ export class Step1Component implements OnDestroy {
           const findI = model.colors.findIndex(
             (color) => color.code === 'white'
           );
-          if (this.carFormGroup.controls.color.pristine) {
+          const currentIndex = model.colors.findIndex(
+            (color) => color.code === this.selectedCar().color.code
+          );
+          console.log(
+            this.selectedCar().color,
+            model.colors[findI],
+            this.carFormGroup.controls.color.pristine,
+            'in console log subscribe'
+          );
+          if (
+            this.carFormGroup.controls.color.pristine ||
+            !model.colors[currentIndex]
+          ) {
+            console.log('if', this.carFormGroup.controls.color.pristine);
             this.carFormGroup.controls.color.patchValue(model.colors[findI]);
           } else {
+            console.log('else');
             this.carFormGroup.controls.color.patchValue(
-              this.selectedCar().color
+              model.colors[currentIndex]
             );
           }
-          console.log('patched input', this.carFormGroup.controls.color.value);
-
           this.selectedCar.update((prev) => {
             const updatedVal: SelectedCar = {
               ...prev,
-              color: prev.color.code === '' ? model.colors[findI] : prev.color,
+              color:
+                !model.colors[currentIndex] || prev.color.code === ''
+                  ? model.colors[findI]
+                  : prev.color,
             };
-            console.log(updatedVal);
             return updatedVal;
           });
 
@@ -120,10 +130,6 @@ export class Step1Component implements OnDestroy {
   }
 
   saveCarData() {
-    this.carFormGroup.controls.model.valueChanges.subscribe((v) =>
-      this.carFormGroup.controls.color.markAsPristine()
-    );
-
     const carModel = this.carFormGroup.controls.model.value;
     const carColorCode = this.carFormGroup.controls.color.value?.code;
     const carColorPrice = this.carFormGroup.controls.color.value?.price;

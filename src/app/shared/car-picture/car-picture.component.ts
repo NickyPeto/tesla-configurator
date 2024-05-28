@@ -1,10 +1,11 @@
 import { Component, computed } from '@angular/core';
 import { CarConfigService } from '../../core/car-config.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-car-picture',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './car-picture.component.html',
   styleUrl: './car-picture.component.scss',
 })

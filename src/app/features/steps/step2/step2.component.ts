@@ -50,12 +50,9 @@ export class Step2Component {
 
       return updatedObject;
     });
-
-    console.log('Selected Config:', this.selectedCar());
   }
 
   compareFn(obj1: Configs, obj2: Configs) {
-    console.log(obj1, obj2, 'in compare function');
     return obj1.description === obj2.description;
   }
 }

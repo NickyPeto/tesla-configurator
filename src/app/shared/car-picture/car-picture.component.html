@@ -1,4 +1,4 @@
-<div class="car">
+<div class="car" *ngIf="selectedCar().color.code">
   <img
     [src]="getCarImgPath()"
     alt="a picture of a car"
