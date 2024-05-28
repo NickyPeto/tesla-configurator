@@ -37,7 +37,7 @@
         name="yoke"
         type="checkbox"
         (change)="saveCarData()"
-        [checked]="carConfigFormGroup.controls.towHitch.value"
+        [checked]="false"
       />
     </div>
     <div *ngIf="carConfig.yoke">
@@ -48,7 +48,7 @@
         name="yoke"
         type="checkbox"
         (change)="saveCarData()"
-        [checked]="carConfigFormGroup.controls.yoke.value"
+        [checked]="false"
       />
     </div>
   </div>

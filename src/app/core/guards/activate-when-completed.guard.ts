@@ -18,7 +18,8 @@ export const activateWhenCompletedGuard: CanActivateFn = (
     {
       route: '/step/2',
       canActivateRouteConfig:
-        carService.selectedCar().model === '' ||
+        !carService.selectedCar().model ||
+        carService.selectedCar().model.code === '' ||
         !carService.selectedCar().color,
     },
     {

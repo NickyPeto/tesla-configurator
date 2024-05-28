@@ -41,7 +41,12 @@ export class Step2Component {
           this.selectedCar().config
         )
       : null;
-    this.carConfig$ = this.carService.getCarConfig(this.selectedCar().model);
+
+    if (this.selectedCar().model.code) {
+      this.carConfig$ = this.carService.getCarConfig(
+        this.selectedCar().model.code
+      );
+    }
     this.changeDet.detectChanges();
   }
 
@@ -54,12 +59,13 @@ export class Step2Component {
     const selectedConfig = this.carConfigFormGroup.controls.config.value;
     const yokeSelected = this.carConfigFormGroup.controls.yoke.value;
     const towHitch = this.carConfigFormGroup.controls.towHitch.value;
+
     this.selectedCar.update((value) => {
       const updatedObject: SelectedCar = {
         ...value,
         config: selectedConfig ?? value.config,
-        yoke: yokeSelected!,
-        towHitch: towHitch!,
+        yoke: yokeSelected ?? false,
+        towHitch: towHitch ?? false,
       };
       return updatedObject;
     });

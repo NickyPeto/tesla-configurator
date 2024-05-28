@@ -21,7 +21,10 @@ export class CarConfigService {
   // computedCarConfig = computed(() => this.carModels);
 
   selectedCar: WritableSignal<SelectedCar> = signal({
-    model: '',
+    model: {
+      code: '',
+      description: '',
+    },
     color: {
       code: '',
       description: '',

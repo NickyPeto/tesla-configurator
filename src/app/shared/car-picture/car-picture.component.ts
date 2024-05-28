@@ -23,7 +23,7 @@ export class CarPictureComponent {
 
   getCarImgPath() {
     if (this.selectedCar().color.code !== '') {
-      return `../../../../assets/${this.selectedCar().model}/${
+      return `../../../../assets/${this.selectedCar().model.code}/${
         this.selectedCar().color.code
       }.jpg`;
     }

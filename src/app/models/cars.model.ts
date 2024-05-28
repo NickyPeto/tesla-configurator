@@ -1,11 +1,11 @@
-//TODO: SPLIT THIS INTO DIFFERENT FILES
+//The model for the response from the /models endpoint
 export interface CarModel {
-  code: CarsModel;
+  code: CarsModelCode;
   description: string;
   colors: CarColors[];
 }
 
-export type CarsModel = 'X' | 'S' | 'C' | '3' | 'Y' | '';
+export type CarsModelCode = 'X' | 'S' | 'C' | '3' | 'Y' | '';
 
 export type CarColors = {
   code: string;
@@ -13,12 +13,15 @@ export type CarColors = {
   price: number;
 };
 
-export interface SelectedCar {
-  model: CarsModel;
-  color: CarColors;
-  config: Configs;
-  yoke?: boolean;
-  towHitch?: boolean;
+//The model for the response from the /options /:code endpoint
+export interface CarConfig {
+  [key: string]: CarConfigDetails;
+}
+
+export interface CarConfigDetails {
+  configs: Configs[];
+  towHitch: boolean;
+  yoke: boolean;
 }
 
 export interface Configs {
@@ -29,12 +32,16 @@ export interface Configs {
   price: number;
 }
 
-export interface CarConfig {
-  [key: string]: CarConfigDetails;
+//The model for the signal in which we will store the selected values
+export interface SelectedCar {
+  model: FormCarModel;
+  color: CarColors;
+  config: Configs;
+  yoke?: boolean;
+  towHitch?: boolean;
 }
 
-export interface CarConfigDetails {
-  configs: Configs[];
-  towHitch: boolean;
-  yoke: boolean;
-}
+export type FormCarModel = {
+  code: CarsModelCode;
+  description: string;
+};

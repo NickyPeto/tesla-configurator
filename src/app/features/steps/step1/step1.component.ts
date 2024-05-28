@@ -1,16 +1,10 @@
-import {
-  Component,
-  OnDestroy,
-  OnInit,
-  signal,
-  WritableSignal,
-} from '@angular/core';
+import { Component, OnDestroy, OnInit, WritableSignal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CarConfigService } from '../../../core/car-config.service';
 import {
   CarColors,
   CarModel,
-  CarsModel,
+  FormCarModel,
   SelectedCar,
 } from '../../../models/cars.model';
 import { CommonModule } from '@angular/common';
@@ -19,13 +13,10 @@ import {
   map,
   Observable,
   of,
-  startWith,
   Subject,
   switchMap,
   takeUntil,
 } from 'rxjs';
-import { Router } from '@angular/router';
-
 @Component({
   selector: 'app-step1',
   standalone: true,
@@ -41,11 +32,11 @@ export class Step1Component implements OnInit, OnDestroy {
   selectedModelColors!: CarColors[];
 
   carFormGroup = new FormGroup({
-    model: new FormControl<CarsModel | null>(null),
+    model: new FormControl<FormCarModel | null>(null),
     color: new FormControl<CarColors>(this.selectedCar().color),
   });
 
-  constructor(private carsService: CarConfigService, private router: Router) {
+  constructor(private carsService: CarConfigService) {
     this.carModels$ = this.carsService.carModels$;
     this.selectedCar = this.carsService.selectedCar;
   }
@@ -53,9 +44,18 @@ export class Step1Component implements OnInit, OnDestroy {
   ngOnInit(): void {
     //Here we will get the right array of colors programmatically
     this.getSelectedCarColors();
-    this.selectedCar().model !== ''
+
+    console.log(!this.selectedCar(), 'oninit');
+
+    this.selectedCar().model.code !== ''
       ? this.carFormGroup.controls.model.patchValue(this.selectedCar().model)
       : null;
+
+    console.log(
+      this.selectedCar().model,
+      this.carFormGroup.controls.model.value,
+      'oninit'
+    );
 
     if (this.selectedCar().color.code === '') {
       this.carFormGroup.controls.color.markAsPristine();
@@ -77,7 +77,9 @@ export class Step1Component implements OnInit, OnDestroy {
         switchMap((modelCode) => {
           if (this.carModels$) {
             return this.carModels$.pipe(
-              map((models) => models.find((model) => model.code === modelCode))
+              map((models) =>
+                models.find((model) => model.code === modelCode?.code)
+              )
             );
           } else {
             return of();
@@ -85,7 +87,6 @@ export class Step1Component implements OnInit, OnDestroy {
         })
       )
       .subscribe((model) => {
-        console.log(model?.colors);
         if (model) {
           this.selectedModelColors = model?.colors;
 
@@ -127,9 +128,13 @@ export class Step1Component implements OnInit, OnDestroy {
       this.carFormGroup.controls.color.value?.description;
 
     this.selectedCar.update((prev) => {
+      console.log(carModel);
       const updatedValue: SelectedCar = {
         ...prev,
-        model: carModel ?? prev.model,
+        model: {
+          code: carModel?.code ?? prev.model.code,
+          description: carModel?.description ?? prev.model.description,
+        },
         color: {
           code: carColorCode ?? prev.color.code,
           price: carColorPrice ?? prev.color.price,
@@ -142,6 +147,9 @@ export class Step1Component implements OnInit, OnDestroy {
   }
 
   compareFn(obj1: CarColors, obj2: CarColors) {
+    if (obj1 == null || obj2 == null) {
+      return obj1 === obj2;
+    }
     return obj1.description === obj2.description;
   }
 }
