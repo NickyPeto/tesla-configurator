@@ -42,7 +42,7 @@ export const activateWhenCompletedGuard: CanActivateFn = (
         protectedRoute.route === '/step/3' &&
         protectedRoute.canActivateRouteConfig
       ) {
-        router.navigate(['/']);
+        router.navigate(['/2']);
         return false;
       }
     }
