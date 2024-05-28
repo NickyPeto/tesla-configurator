@@ -39,7 +39,6 @@ export class Step2Component implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.selectedCar(), 'In step 2');
     this.carConfig$.subscribe((config) => {
       // Initialize form with the first config
       if (config.configs.length > 0) {

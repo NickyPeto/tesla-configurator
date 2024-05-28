@@ -28,6 +28,9 @@ export class Step3Component {
     if (this.selectedCar().yoke) {
       sumCost = sumCost + 1000;
     }
+    if (this.selectedCar().color.price > 0) {
+      sumCost = sumCost + this.selectedCar().color.price;
+    }
     return sumCost;
   }
 }

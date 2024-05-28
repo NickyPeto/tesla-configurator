@@ -19,7 +19,7 @@ export const activateWhenCompletedGuard: CanActivateFn = (
       route: '/step/2',
       canActivateRouteConfig:
         carService.selectedCar().model === '' ||
-        carService.selectedCar().color === '',
+        !carService.selectedCar().color,
     },
     {
       route: '/step/3',
@@ -30,8 +30,6 @@ export const activateWhenCompletedGuard: CanActivateFn = (
   // Iterate over protectedRoutes to find a matching route and check its condition
   for (const protectedRoute of protectedRoutes) {
     if (state.url.startsWith(protectedRoute.route)) {
-      console.log(protectedRoute.canActivateRouteConfig, 'can activate');
-      console.log(carService.selectedCar().config);
       if (
         protectedRoute.route === '/step/2' &&
         protectedRoute.canActivateRouteConfig

@@ -1,19 +1,5 @@
-import {
-  ChangeDetectorRef,
-  Component,
-  inject,
-  OnDestroy,
-  OnInit,
-  Signal,
-  signal,
-  WritableSignal,
-} from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-} from '@angular/forms';
+import { Component, OnDestroy, OnInit, WritableSignal } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CarConfigService } from '../../../core/car-config.service';
 import {
   CarColors,
@@ -23,7 +9,7 @@ import {
 } from '../../../models/cars.model';
 import { CommonModule } from '@angular/common';
 import { filter, map, Observable, of, Subject, takeUntil } from 'rxjs';
-import { NavigationEnd, Router } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-step1',
@@ -40,8 +26,12 @@ export class Step1Component implements OnInit, OnDestroy {
   selectedModelColors: CarColors[] = [];
 
   carFormGroup = new FormGroup({
-    model: new FormControl<CarsModel | string>('choose'),
-    color: new FormControl<string>('white'),
+    model: new FormControl<CarsModel>(''),
+    color: new FormControl<CarColors>({
+      code: '',
+      price: 0,
+      description: '',
+    }),
   });
 
   constructor(private carsService: CarConfigService, private router: Router) {
@@ -51,7 +41,6 @@ export class Step1Component implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getSelectedCarColors();
-    console.log(this.selectedCar(), 'In step 1');
   }
 
   ngOnDestroy(): void {
@@ -76,10 +65,11 @@ export class Step1Component implements OnInit, OnDestroy {
         model$.pipe(takeUntil(this.cancellation)).subscribe((model) => {
           if (model) {
             this.selectedModelColors = model.colors;
-            console.log(this.carFormGroup.controls.color.value);
-            this.carsService.selectedCarColor.set(
-              this.carFormGroup.controls.color.value
-            );
+            if (this.carFormGroup.controls.color.value?.code) {
+              this.carsService.selectedCarColor.set(
+                this.carFormGroup.controls.color.value?.code
+              );
+            }
           } else {
             this.selectedModelColors = [];
           }
@@ -88,16 +78,24 @@ export class Step1Component implements OnInit, OnDestroy {
   }
 
   saveCarData() {
-    this.carsService.selectedCar.update((value) => {
+    const carModel = this.carFormGroup.controls.model.value;
+    const carColorCode = this.carFormGroup.controls.color.value?.code;
+    const carColorPrice = this.carFormGroup.controls.color.value?.price;
+    const carColorDescription =
+      this.carFormGroup.controls.color.value?.description;
+
+    this.carsService.selectedCar.update((prev) => {
       const updatedValue: SelectedCar = {
-        model: (this.carFormGroup.controls.model.value ??
-          value.model) as CarsModel,
-        color: this.carFormGroup.controls.color.value ?? value.color,
+        ...prev,
+        model: carModel ?? prev.model,
+        color: {
+          code: carColorCode ?? prev.color.code,
+          price: carColorPrice ?? prev.color.price,
+          description: carColorDescription ?? prev.color.description,
+        },
       };
-      return {
-        ...value,
-        ...updatedValue,
-      };
+
+      return updatedValue;
     });
   }
 }

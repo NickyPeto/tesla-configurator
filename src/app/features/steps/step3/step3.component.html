@@ -21,6 +21,10 @@
     <p>Yoke</p>
     <p>{{ 1000 | currency : "USD" }}</p>
   </div>
+  <div *ngIf="selectedCar().color.price > 0">
+    <p>Color: {{ selectedCar().color.description }}</p>
+    <p>{{ selectedCar().color.price | currency : "USD" }}</p>
+  </div>
   <div>
     <p>
       <strong>Total cost:</strong>

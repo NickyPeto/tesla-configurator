@@ -34,8 +34,11 @@ export class CarConfigService implements OnInit {
 
   selectedCar: WritableSignal<SelectedCar> = signal({
     model: '',
-    color: '',
-    price: 0,
+    color: {
+      code: '',
+      description: '',
+      price: 0,
+    },
     config: undefined,
   });
 
