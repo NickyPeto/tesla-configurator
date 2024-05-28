@@ -7,6 +7,7 @@ export const routes: Routes = [
     redirectTo: 'step/1',
     pathMatch: 'full',
   },
+
   {
     path: 'step/1',
     loadComponent: () =>
@@ -29,5 +30,9 @@ export const routes: Routes = [
         (c) => c.Step3Component
       ),
     canActivate: [activateWhenCompletedGuard],
+  },
+  {
+    path: '**',
+    redirectTo: 'step/1',
   },
 ];
