@@ -11,7 +11,7 @@ import {
   SelectedCar,
 } from '../../../models/cars.model';
 import { CommonModule } from '@angular/common';
-import { map, Observable, Subject, takeUntil } from 'rxjs';
+import { map, Observable, Subject, switchMap, takeUntil, tap } from 'rxjs';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
@@ -37,19 +37,29 @@ export class Step2Component {
   });
 
   ngOnInit(): void {
-    this.carConfig$
-      .pipe(
-        takeUntil(this.cancellation),
-        map((value) => {
-          this.carConfigFormGroup.controls.config.patchValue(value.configs[0]);
-          this.carConfigFormGroup.controls.towHitch.patchValue(false);
-          this.carConfigFormGroup.controls.yoke.patchValue(false);
-        })
-      )
-      .subscribe((val) => console.log(val));
+    this.carConfig$ = this.carConfig$.pipe(
+      takeUntil(this.cancellation),
+      tap((value) => {
+        this.carConfigFormGroup.controls.config.patchValue(value.configs[0]);
+        this.carConfigFormGroup.controls.towHitch.patchValue(false);
+        this.carConfigFormGroup.controls.yoke.patchValue(false);
+        if (this.carConfigFormGroup.pristine) {
+          this.selectedCar.update((prev) => {
+            const newObj: SelectedCar = {
+              ...prev,
+              config: value.configs[0],
+              towHitch: false,
+              yoke: false,
+            };
+            return newObj;
+          });
+        }
+      })
+    );
   }
 
   ngOnDestroy(): void {
+    this.carConfigFormGroup.markAsPristine();
     this.cancellation.next();
     this.cancellation.complete();
   }
