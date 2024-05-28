@@ -2,6 +2,7 @@ import {
   ChangeDetectorRef,
   Component,
   inject,
+  signal,
   WritableSignal,
 } from '@angular/core';
 import { CarConfigService } from '../../../core/car-config.service';
@@ -11,7 +12,7 @@ import {
   SelectedCar,
 } from '../../../models/cars.model';
 import { CommonModule } from '@angular/common';
-import { Observable, Subject } from 'rxjs';
+import { map, Observable, Subject } from 'rxjs';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
@@ -30,8 +31,8 @@ export class Step2Component {
 
   carConfigFormGroup = new FormGroup({
     config: new FormControl<Configs | null>(null),
-    towHitch: new FormControl<boolean>(this.selectedCar().towHitch ?? false),
-    yoke: new FormControl<boolean>(this.selectedCar().yoke ?? false),
+    towHitch: new FormControl<boolean>(false),
+    yoke: new FormControl<boolean>(false),
   });
 
   ngOnInit(): void {
@@ -46,6 +47,7 @@ export class Step2Component {
         this.selectedCar().model.code
       );
     }
+
     this.changeDet.detectChanges();
   }
 
@@ -63,12 +65,14 @@ export class Step2Component {
       const updatedObject: SelectedCar = {
         ...value,
         config: selectedConfig ?? value.config,
-        yoke: yokeSelected ?? false,
-        towHitch: towHitch ?? false,
+        yoke: yokeSelected! ?? false,
+        towHitch: towHitch! ?? false,
       };
+      console.log(updatedObject, 'updated object');
       return updatedObject;
     });
   }
+
   compareFn(obj1: Configs, obj2: Configs): boolean {
     if (obj1 == null || obj2 == null) {
       return obj1 === obj2;
