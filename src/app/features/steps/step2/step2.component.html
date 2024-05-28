@@ -1,6 +1,6 @@
 <ng-container *ngIf="carConfig$ | async as carConfig">
-  <div [formGroup]="carConfigFormGroup">
-    Config:
+  <div class="form-container" [formGroup]="carConfigFormGroup">
+    <p>Config:</p>
     <select
       id="configSelect"
       [formControl]="carConfigFormGroup.controls.config"

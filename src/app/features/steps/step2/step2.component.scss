@@ -1,7 +1,13 @@
 .form {
   display: flex;
+  margin: 8px;
 }
 
 .config-wrapper {
   display: flex;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
 }
